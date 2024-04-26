@@ -1,169 +1,134 @@
-// import {Component} from 'react'
-
-// import './index.css'
-// // import Results from '../Results'
-// import DetailsContext from '../../ReactContext'
-
-// class Timer extends Component {
-//   state = {
-//     ElapsedTimeInSeconds: 0,
-//     timerMinutes: 10,
-//   }
-
-//   componentDidMount() {
-//     this.Tick()
-//   }
-
-//   componentWillUnmount() {
-//     this.clearInterval()
-//   }
-
-//   clearInterval = () => clearInterval(this.timerId)
-
-//   IncrementOfElapsedTime = () => {
-//     const {ElapsedTimeInSeconds, timerMinutes} = this.state
-//     const TimerCompleted = timerMinutes * 60 === ElapsedTimeInSeconds
-
-//     if (TimerCompleted) {
-//       this.clearInterval()
-//     } else {
-//       this.setState(prev => ({
-//         ElapsedTimeInSeconds: prev.ElapsedTimeInSeconds + 1,
-//       }))
-//     }
-//   }
-
-//   Tick = () => {
-//     this.timerId = setInterval(this.IncrementOfElapsedTime, 1000)
-//   }
-
-//   clearTimer = () => {
-//     clearInterval(this.timerId)
-//   }
-
-//   RenderMinutesDisplayed = () => {
-//     const {ElapsedTimeInSeconds, timerMinutes} = this.state
-//     const timeRemaining = timerMinutes * 60 - ElapsedTimeInSeconds
-
-//     const Minutes = Math.floor(timeRemaining / 60)
-//     const Seconds = Math.floor(timeRemaining % 60)
-
-//     const stringifiedMin = Minutes > 9 ? Minutes : `0${Minutes}`
-//     const stringifiedSec = Seconds > 9 ? Seconds : `0${Seconds}`
-
-//     return `${stringifiedMin}:${stringifiedSec}`
-//   }
-
-//   RenderCompletedTime = () => {
-//     // this.props.onElapsedTimeChange(this.state.elapsedTimeInSeconds)
-
-//     const {ElapsedTimeInSeconds} = this.state
-//     const Minutes = Math.floor(ElapsedTimeInSeconds / 60)
-//     const Seconds = Math.floor(ElapsedTimeInSeconds % 60)
-
-//     const Min = Minutes > 9 ? Minutes : `0${Minutes}`
-//     const Sec = Seconds > 9 ? Seconds : `0${Seconds}`
-//     return `${Min}:${Sec}`
-//   }
-
-//   render() {
-//     // const clearedTime=null
-//     // if(!isTimerRunning){
-//     //     clearedTime=
-//     // }
-
-//     const completedTime = this.RenderCompletedTime()
-//     console.log(completedTime)
-//     return (
-//       <>
-//         <div className="timer-container">
-//           <h1 className="heading">Time Left</h1>
-//           <p className="time">{this.RenderMinutesDisplayed()}</p>
-//           {/* <button type="button" onClick={this.clearTimer}>
-//             click
-//           </button> */}
-//         </div>
-//       </>
-//     )
-//   }
-
-// }
-
-// export default Timer
-
-import {useState, useEffect, useContext} from 'react'
-import {useHistory} from 'react-router-dom'
-// import {Redirect} from 'react-router-dom'
 import './index.css'
-import DetailsContext from '../../ReactContext'
+// import {useContext} from 'react'
+import {Link} from 'react-router-dom'
+import Header from '../Header'
+// import DetailsContext from '../../ReactContext'
+// import TimeUp from '../TimeUp'
 
-const Timer = () => {
-  const [timerMinutes] = useState(10)
-  const [elapsedTime, setElapsedTime] = useState(0)
-  const {setElapsedTimeInSeconds, setTheTimerChange} = useContext(
-    DetailsContext,
-  )
+// import ScoreContext from '../../ReactContext'
 
-  const history = useHistory()
+// const Results = ({location}) => {
+//   const {score} = location.state
+//   const {completedTime} = props
+const Results = props => {
+  const {location} = props
+  const {score, isTimeRunning, elapsedTimeInSeconds} = location.state
+  console.log(elapsedTimeInSeconds)
+  console.log(isTimeRunning)
+  console.log(score)
 
-  useEffect(() => {
-    const timerId = setInterval(() => {
-      setElapsedTime(prevElapsedTime => prevElapsedTime + 1)
-    }, 1000)
-    if (elapsedTime === timerMinutes * 60) {
-      clearInterval(timerId)
-      history.replace('/results')
-      setTheTimerChange(false)
-    }
-    setElapsedTimeInSeconds(elapsedTime)
+  const hours = Math.floor(elapsedTimeInSeconds / 3600)
+  const minutes = Math.floor((elapsedTimeInSeconds % 3600) / 60)
+  const seconds = Math.floor(elapsedTimeInSeconds % 60)
+  const disHr = hours > 9 ? hours : `0${hours}`
+  const disMin = minutes > 9 ? minutes : `0${minutes}`
+  const disSec = seconds > 9 ? seconds : `0${seconds}`
+  const formattedTime = `${disHr}:${disMin}:${disSec}`
 
-    return () => {
-      clearInterval(timerId)
-    }
-  }, [
-    history,
-    elapsedTime,
-    timerMinutes,
-    setElapsedTimeInSeconds,
-    setTheTimerChange,
-  ])
+  const scoreValue = score >= 10 ? {score} : `0${score}`
 
-  //   useEffect(() => {
-  //     if (elapsedTime === timerMinutes * 60) {
-  //       clearInterval(timerId)
-  //     }
-  //     setElapsedTimeInSeconds(elapsedTime) // Update context value
-  //   }, [elapsedTime, timerMinutes, setElapsedTimeInSeconds])
-
-  //   const renderElapsedTime = () => {
-  //     const minutes = Math.floor(elapsedTime / 60)
-  //     const seconds = Math.floor(elapsedTime % 60)
-  //     const stringifiedMin = minutes > 9 ? minutes : `0${minutes}`
-  //     const stringifiedSec = seconds > 9 ? seconds : `0${seconds}`
-  //     return `${stringifiedMin}:${stringifiedSec}`
-  //   }
-  const RemainingTime = () => {
-    const time = timerMinutes * 60 - elapsedTime
-    const minutes = Math.floor(time / 60)
-    const seconds = Math.floor(time % 60)
-    const stringifiedMin = minutes > 9 ? minutes : `0${minutes}`
-    const stringifiedSec = seconds > 9 ? seconds : `0${seconds}`
-    return (
-      <p className="time">
-        00:{stringifiedMin}:{stringifiedSec}
-      </p>
-    )
-  }
-
-  return (
+  return isTimeRunning ? (
+    <div>
+      <Header />
+      <div className="bg-container">
+        <div className="component">
+          <div className="result-card-container">
+            <div className="bg-card">
+              <img
+                src="https://res.cloudinary.com/dowxofd2k/image/upload/v1711890610/Asset_2_1_c8uttm.png"
+                alt="submit"
+                className="img-submit"
+              />
+              <h1 className="para">Congrats! You completed the assessment</h1>
+              <p className="time-taken">Time Taken: {formattedTime}</p>
+              <p className="score">Your Score:{scoreValue}</p>
+              <Link to="/assessment">
+                <button type="button" className="reattempt-btn">
+                  Reattempt
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  ) : (
     <>
-      <div className="timer-container">
-        <h1 className="heading">Time Left</h1>
-        {/* <p className="time">{RemainingTime()}</p> */}
-        {RemainingTime()}
+      <Header />
+      <div className="time-up-container">
+        <div className="time-up-card">
+          <img
+            src="https://res.cloudinary.com/dowxofd2k/image/upload/v1711996764/calender_1_1_q3e1we.png"
+            alt="time up"
+            className="time-up-img"
+          />
+          <h1 className="timeUp-heading">Time is up!</h1>
+          <p className="timeUp-para">
+            You did not complete the assessment within the time
+          </p>
+          <p className="timeUp-para-2">
+            Your Score:<span>{scoreValue}</span>
+          </p>
+          <Link to="/assessment">
+            <button type="button" className="Reattempt-btn">
+              Reattempt
+            </button>
+          </Link>
+        </div>
       </div>
     </>
   )
 }
 
-export default Timer
+/* <div className="bg-container">
+        <div className="component">
+          <div className="results-card_container">
+            <img
+              src="https://res.cloudinary.com/dowxofd2k/image/upload/v1711890610/Asset_2_1_c8uttm.png"
+              alt="submit"
+              className="img-submit"
+            />
+            <p className="para">Congrats! You completed the assessment.</p>
+            <p className="time-taken">Time Taken: 000000</p>
+            <p className="score">Your Score: {score}</p>
+
+            <Link to="/assess/questions">
+              <button type="button" className="reattempt-btn">
+                Reattempt
+              </button>
+            </Link>
+          </div>
+        </div>
+      </div> */
+
+//   <ScoreContext.Consumer>
+//     {value => {
+//       const {score} = value
+//       return (
+//         <>
+//           <Header />
+//           <div className="bg-container">
+//             <div className="bg-card">
+//               <div className="results-card_container">
+//                 <img
+//                   src="https://res.cloudinary.com/dowxofd2k/image/upload/v1711890610/Asset_2_1_c8uttm.png"
+//                   alt="submit"
+//                   className="img-submit"
+//                 />
+//                 <p className="para">Congrats! You completed the assessment.</p>
+//                 <p className="time-taken">Time Taken: 0000</p>
+//                 <p className="score">Your Score: {score}</p>
+//                 <Link to="/assess/questions">
+//                   <button type="button" className="reattempt-btn">
+//                     Reattempt
+//                   </button>
+//                 </Link>
+//               </div>
+//             </div>
+//           </div>
+//         </>
+//       )
+//     }}
+//   </ScoreContext.Consumer>
+
+export default Results
