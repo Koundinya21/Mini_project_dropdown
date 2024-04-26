@@ -22,7 +22,7 @@ class OptionsContent extends Component {
 
           return (
             <li
-              key={eachOption.id}
+              key={eachOption.idOption}
               className={optionClassName}
               onClick={onClickOption}
             >
@@ -36,28 +36,59 @@ class OptionsContent extends Component {
     )
   }
 
+  // renderSingleOptions = () => {
+  //   const {options} = this.props
+
+  //   return (
+  //     <div className="single-option-container">
+  //       <select className="single-option">
+  //         {options.map(eachOption => {
+  //           const {onChangeSingleOption, activeOption} = this.props
+  //           const onChangeOfValue = event => {
+  //             onChangeSingleOption(event.target.value)
+  //             console.log(event.target.value)
+  //             console.log(eachOption.idOption)
+  //           }
+
+  //           const activeOptionClassName =
+  //             activeOption === eachOption.idOption ? 'single-option-text' : ''
+  //           return (
+  //             <option
+  //               key={eachOption.optionId}
+  //               value={eachOption}
+  //               className={activeOptionClassName}
+  //               onChange={onChangeOfValue}
+  //             >
+  //               {eachOption.text}
+  //             </option>
+  //           )
+  //         })}
+  //       </select>
+  //     </div>
+  //   )
+  // }
   renderSingleOptions = () => {
-    const {options} = this.props
+    const {options, onChangeOption} = this.props
+
+    const onChangeOfValue = event => {
+      const selectedOptionId = event.target.value
+      onChangeOption(selectedOptionId)
+      console.log('HELOO')
+    }
 
     return (
       <div className="single-option-container">
-        <select className="single-option">
+        <select className="single-option" onChange={onChangeOfValue}>
           {options.map(eachOption => {
-            const {onChangeSingleOption, activeOption} = this.props
-            const onChangeOfValue = event => {
-              onChangeSingleOption(event.target.value)
-              console.log(event.target.value)
-              console.log(eachOption.idOption)
-            }
+            const {activeOption} = this.props
 
             const activeOptionClassName =
               activeOption === eachOption.idOption ? 'single-option-text' : ''
             return (
               <option
                 key={eachOption.optionId}
-                value={eachOption}
+                value={eachOption.optionId}
                 className={activeOptionClassName}
-                onChange={onChangeOfValue}
               >
                 {eachOption.text}
               </option>
